@@ -1,6 +1,6 @@
 """Official Python SDK for the Verifly email-verification API (https://verifly.email).
 
-PyPI package name: ``verifly-sdk``  (import as ``verifly_sdk``).
+PyPI package name (once published): ``verifly-email-sdk``  (import as ``verifly_sdk``).
 
 Quick start::
 

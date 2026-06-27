@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "verifly-sdk"
+name = "verifly-email-sdk"
 version = "1.0.0"
 description = "Official Python SDK for the Verifly email-verification API (verifly.email)"
 readme = "README.md"

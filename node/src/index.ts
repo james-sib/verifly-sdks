@@ -1,11 +1,11 @@
 /**
  * Official TypeScript/Node SDK for the Verifly email-verification API.
  *
- * npm package name: `@verifly/sdk`.
+ * npm package name (once published): `verifly-email-sdk`.
  *
  * @example
  * ```ts
- * import { VeriflyClient } from "@verifly/sdk";
+ * import { VeriflyClient } from "verifly-email-sdk";
  * const client = new VeriflyClient("vf_your_api_key");
  * const r = await client.verify("bill.gates@microsoft.com");
  * console.log(r.result, r.recommendation);
@@ -14,7 +14,7 @@
 
 export const VERSION = "1.0.0";
 const DEFAULT_BASE_URL = "https://verifly.email";
-const USER_AGENT = `verifly-sdk-node/${VERSION}`;
+const USER_AGENT = `verifly-email-sdk-node/${VERSION}`;
 
 /* -------------------------------------------------------------------------- */
 /*  Typed request/response models (derived from the live OpenAPI spec)         */

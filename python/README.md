@@ -1,10 +1,12 @@
-# verifly-sdk (Python)
+# verifly-email-sdk (Python)
 
 Official Python SDK for the [Verifly](https://verifly.email) email-verification API.
 
-> **Package naming.** Install **`verifly-sdk`** and import **`verifly_sdk`**.
-> The plain name `verifly` on PyPI belongs to an **unrelated 2FA company** — it
-> is *not* this project. Always use `verifly-sdk`.
+> **Package naming.** The published PyPI package name will be **`verifly-email-sdk`**
+> (import as **`verifly_sdk`**). It is **not on PyPI yet** — install from this repo
+> with the command below.
+> Do **not** install `verifly-sdk` or `verifly` on PyPI — those belong to an
+> **unrelated 2FA company** (verifly.net), not this project.
 
 - Zero dependencies (pure Python standard library).
 - Fully typed, with docstrings on every method.
@@ -15,9 +17,11 @@ Official Python SDK for the [Verifly](https://verifly.email) email-verification 
 ## Install
 
 ```bash
-pip install verifly-sdk          # once published
-# or, from this repo:
-pip install /path/to/sdks/python
+# Install from this repo (not on PyPI yet):
+pip install "git+https://github.com/james-sib/verifly-sdks.git#subdirectory=python"
+
+# or from a local checkout:
+pip install /path/to/verifly-sdks/python
 ```
 
 ## Quick start

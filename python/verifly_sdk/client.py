@@ -19,7 +19,7 @@ __version__ = "1.0.0"
 DEFAULT_BASE_URL = "https://verifly.email"
 DEFAULT_TIMEOUT = 30.0
 DEFAULT_MAX_RETRIES = 3
-_USER_AGENT = f"verifly-sdk-python/{__version__}"
+_USER_AGENT = f"verifly-email-sdk-python/{__version__}"
 
 JSON = Dict[str, Any]
 

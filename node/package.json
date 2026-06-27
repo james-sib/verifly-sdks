@@ -1,5 +1,5 @@
 {
-  "name": "@verifly/sdk",
+  "name": "verifly-email-sdk",
   "version": "1.0.0",
   "description": "Official TypeScript/Node SDK for the Verifly email-verification API (verifly.email)",
   "license": "MIT",

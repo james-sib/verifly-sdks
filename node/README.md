@@ -1,12 +1,13 @@
-# @verifly/sdk (Node / TypeScript)
+# verifly-email-sdk (Node / TypeScript)
 
 Official TypeScript/Node SDK for the [Verifly](https://verifly.email)
 email-verification API.
 
-> **Package naming.** The scoped name **`@verifly/sdk`** is the official
-> package. The unscoped `verifly` name on npm is **not** maintained by this
-> project — always install the scoped `@verifly/sdk`. (On PyPI, the Python SDK
-> is `verifly-sdk`, because plain `verifly` there is an unrelated 2FA company.)
+> **Package naming.** The published npm package name will be **`verifly-email-sdk`**
+> (unscoped). It is **not on npm yet** — install from this repo (see below).
+> Do **not** install `@verifly/sdk` or `verifly` / `verifly-sdk` on npm — those are
+> **not** maintained by this project (the `verifly`-style packages are an unrelated
+> 2FA company at verifly.net).
 
 - Zero runtime dependencies — uses the built-in `fetch` (Node 18+).
 - Fully typed request/response interfaces derived from the live OpenAPI spec.
@@ -17,13 +18,20 @@ email-verification API.
 ## Install
 
 ```bash
-npm install @verifly/sdk        # once published
+# Not on npm yet — clone and build, then install locally:
+git clone https://github.com/james-sib/verifly-sdks.git
+cd verifly-sdks/node
+npm install && npm run build
+# then add it to your project:
+npm install /path/to/verifly-sdks/node
 ```
+
+Once published, this becomes `npm install verifly-email-sdk`.
 
 ## Quick start
 
 ```ts
-import { VeriflyClient, VeriflyError } from "@verifly/sdk";
+import { VeriflyClient, VeriflyError } from "verifly-email-sdk";
 
 const client = new VeriflyClient("vf_your_api_key"); // baseUrl defaults to https://verifly.email
 
@@ -42,7 +50,7 @@ try {
 CommonJS works too:
 
 ```js
-const { VeriflyClient } = require("@verifly/sdk");
+const { VeriflyClient } = require("verifly-email-sdk");
 ```
 
 ## Authentication

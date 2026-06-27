@@ -453,6 +453,16 @@ export class VeriflyClient {
       headers["Content-Type"] = "application/json";
     }
 
+    // Only auto-retry requests that are safe to resend. GET/HEAD are
+    // idempotent; a POST is safe only when it carries an Idempotency-Key (the
+    // server dedupes those). Non-idempotent POSTs such as verifyBatch have no
+    // server-side dedupe, so a timed-out request must never be re-sent or it
+    // could be charged 2-4x.
+    const retryable =
+      method === "GET" ||
+      method === "HEAD" ||
+      opts.idempotencyKey !== undefined;
+
     let attempt = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -469,7 +479,7 @@ export class VeriflyClient {
         });
       } catch (err) {
         clearTimeout(timer);
-        if (attempt <= this.maxRetries) {
+        if (retryable && attempt <= this.maxRetries) {
           await sleep(backoff(attempt));
           continue;
         }
@@ -490,7 +500,7 @@ export class VeriflyClient {
       }
 
       if (res.status === 429 || res.status >= 500) {
-        if (attempt <= this.maxRetries) {
+        if (retryable && attempt <= this.maxRetries) {
           const retryAfter = parseRetryAfter(res.headers.get("retry-after"));
           await sleep(retryAfter ?? backoff(attempt));
           continue;

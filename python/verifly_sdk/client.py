@@ -24,6 +24,31 @@ _USER_AGENT = f"verifly-sdk-python/{__version__}"
 JSON = Dict[str, Any]
 
 
+class _SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Redirect handler that never leaks credentials across origins.
+
+    ``urllib`` follows 3xx redirects automatically and, by default, forwards
+    every request header -- including ``Authorization`` -- to the redirect
+    target even when it points at a different scheme/host. That would leak the
+    ``vf_`` API key to an unrelated server. This strips the ``Authorization``
+    header whenever a redirect crosses to a different scheme, host, or port.
+    """
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        new_req = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if new_req is not None:
+            old = urllib.parse.urlsplit(req.full_url)
+            new = urllib.parse.urlsplit(newurl)
+            if (old.scheme, old.hostname, old.port) != (
+                new.scheme,
+                new.hostname,
+                new.port,
+            ):
+                new_req.headers.pop("Authorization", None)
+                new_req.unredirected_hdrs.pop("Authorization", None)
+        return new_req
+
+
 class VeriflyError(Exception):
     """Raised when the Verifly API returns an error envelope or the request fails.
 
@@ -77,6 +102,9 @@ class VeriflyClient:
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.max_retries = max_retries
+        # Open requests through a handler that strips Authorization on
+        # cross-origin redirects so the API key can never leak to another host.
+        self._opener = urllib.request.build_opener(_SafeRedirectHandler())
 
     # ------------------------------------------------------------------ #
     # Account lifecycle
@@ -342,6 +370,13 @@ class VeriflyClient:
             data = json.dumps(body).encode("utf-8")
             headers["Content-Type"] = "application/json"
 
+        # Only auto-retry requests that are safe to resend. GET/HEAD are
+        # idempotent; a POST is safe only when it carries an Idempotency-Key
+        # (the server dedupes those). Non-idempotent POSTs such as verify_batch
+        # have no server-side dedupe, so a timed-out request must never be
+        # re-sent or it could be charged 2-4x.
+        retryable = method in ("GET", "HEAD") or idempotency_key is not None
+
         attempt = 0
         while True:
             attempt += 1
@@ -350,7 +385,7 @@ class VeriflyClient:
             except urllib.error.HTTPError as exc:
                 payload, status, resp_headers = self._read_http_error(exc)
             except urllib.error.URLError as exc:
-                if attempt <= self.max_retries:
+                if retryable and attempt <= self.max_retries:
                     time.sleep(self._backoff(attempt))
                     continue
                 raise VeriflyError(
@@ -362,7 +397,7 @@ class VeriflyClient:
             )
 
             if status == 429 or status >= 500:
-                if attempt <= self.max_retries:
+                if retryable and attempt <= self.max_retries:
                     retry_after = self._parse_retry_after(resp_headers)
                     time.sleep(
                         retry_after if retry_after is not None else self._backoff(attempt)
@@ -383,7 +418,7 @@ class VeriflyClient:
 
     def _send(self, method: str, url: str, headers: JSON, data: Optional[bytes]):
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
-        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+        with self._opener.open(req, timeout=self.timeout) as resp:
             raw = resp.read().decode("utf-8")
             parsed = json.loads(raw) if raw else {}
             return parsed, resp.status, dict(resp.headers)

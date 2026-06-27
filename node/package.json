@@ -1,0 +1,39 @@
+{
+  "name": "@verifly/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript/Node SDK for the Verifly email-verification API (verifly.email)",
+  "license": "MIT",
+  "author": "Verifly",
+  "homepage": "https://verifly.email",
+  "repository": {
+    "type": "git",
+    "url": "https://verifly.email"
+  },
+  "keywords": [
+    "email",
+    "verification",
+    "validation",
+    "verifly",
+    "deliverability"
+  ],
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0"
+  }
+}

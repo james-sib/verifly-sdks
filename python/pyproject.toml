@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "verifly-sdk"
+version = "1.0.0"
+description = "Official Python SDK for the Verifly email-verification API (verifly.email)"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Verifly" }]
+keywords = ["email", "verification", "validation", "verifly", "deliverability"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://verifly.email"
+Documentation = "https://verifly.email/docs/api"
+"API Spec" = "https://verifly.email/openapi.json"
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools]
+packages = ["verifly_sdk"]
+
+[tool.setuptools.package-data]
+verifly_sdk = ["py.typed"]
